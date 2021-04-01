@@ -7,6 +7,7 @@ using Microsoft.OpenApi.Models;
 using StarwarsTheme.Application.Characters;
 using StarwarsTheme.Infrastructure.Characters;
 using StarwarsTheme.Infrastructure.Mapping.Profiles;
+using StarwarsTheme.PriorToReadyTasks;
 
 namespace StarwarsTheme
 {
@@ -28,11 +29,14 @@ namespace StarwarsTheme
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StarwarsTheme", Version = "v1" });
             });
+            services.Configure<StarwarsCharactersSettings>(Configuration.GetSection(nameof(StarwarsCharactersSettings)));
             services
                 .AddTransient<ICharacterService, CharacterService>()
                 .AddTransient<ICharacterMappingService, CharacterMappingService>()
                 .AddSingleton<ICharacterRepository, InMemoryCharacterRepository>()
-                .AddAutoMapper(typeof(CharacterProfile));
+                .AddTransient<IStartupTask>( sp => new InMemoryRepositoriesDataFetchingTask(sp))
+                .AddAutoMapper(typeof(CharacterProfile))
+                .AddHttpClient<IStarwarsCharactersGateway, StarwarsCharactersGateway>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
