@@ -1,10 +1,11 @@
-# DoTasksBeforeReady
+# Execute some tasks before your API is ready
 
-* FeatureToggle
-* Tasks before statup
+Not too long ago, we deliverd our MVP, now we are developing a more robust solution. We hade to implement a particular scenario where we went from InMemory lists loaded from appsettings.json to having a centralized service as a source of these InMemory lists. We where told to defer the ready state of our application for kubernetes until all records where loaded from the external service.
 
-register as transient IStartupTask and use factory to pass porvider by parameter to the data fetcher
+Since my team is very much in to CI/CD we decided to use a feature toggle to deliver value promptly and having a fail safe mechanism.
+Here are the tools we used for this particular endevor
 
-Modify Program.cs to have async main 
+* [Feature toggle](./Docs/FeatureToggle.md)
+* [Prior to ready task](./Docs/PriorToReadyTask.md)
 
-Feature toggle : https://docs.microsoft.com/en-us/azure/azure-app-configuration/use-feature-flags-dotnet-core?tabs=core5x
+I just felt like building a starwars contest API and while at the task using the tools mentioned before.
