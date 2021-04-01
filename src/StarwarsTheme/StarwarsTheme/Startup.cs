@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.FeatureManagement;
 using Microsoft.OpenApi.Models;
 using StarwarsTheme.Application.Characters;
 using StarwarsTheme.Infrastructure.Characters;
@@ -30,11 +31,13 @@ namespace StarwarsTheme
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StarwarsTheme", Version = "v1" });
             });
             services.Configure<StarwarsCharactersSettings>(Configuration.GetSection(nameof(StarwarsCharactersSettings)));
+            services.AddFeatureManagement();
+            services.AddPriorToReadyTasks();
+
             services
                 .AddTransient<ICharacterService, CharacterService>()
                 .AddTransient<ICharacterMappingService, CharacterMappingService>()
                 .AddSingleton<ICharacterRepository, InMemoryCharacterRepository>()
-                .AddTransient<IStartupTask>( sp => new InMemoryRepositoriesDataFetchingTask(sp))
                 .AddAutoMapper(typeof(CharacterProfile))
                 .AddHttpClient<IStarwarsCharactersGateway, StarwarsCharactersGateway>();
         }

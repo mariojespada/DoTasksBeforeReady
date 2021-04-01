@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.FeatureManagement;
 using StarwarsTheme.Application.Characters;
 using System;
 using System.Threading;
@@ -16,8 +17,13 @@ namespace StarwarsTheme.PriorToReadyTasks
         }
         public async Task ExecuteAsync(CancellationToken cancellationToken = default)
         {
-            var repo = serviceProvider.GetRequiredService<ICharacterRepository>();
-            await repo.UpdateRepositoryAsync(cancellationToken);
+            var featureManager = serviceProvider.GetRequiredService<IFeatureManager>();
+            if (await featureManager.IsEnabledAsync("PriorToReadyDataFetchingFeature"))
+            {
+                var repo = serviceProvider.GetRequiredService<ICharacterRepository>();
+                await repo.UpdateRepositoryAsync(cancellationToken);
+            }
+            
         }
     }
 }
